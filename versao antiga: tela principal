@@ -1,0 +1,41 @@
+import flet as ft
+
+def get_main_screen(change_screen, db):
+    def add_class(e):
+        if class_name.value and class_time.value:
+            # Adiciona aula ao Firebase
+            db.collection("classes").add({
+                "name": class_name.value,
+                "time": class_time.value
+            })
+            # Atualiza a lista localmente
+            class_list.controls.append(ft.ListTile(title=ft.Text(class_name.value), subtitle=ft.Text(class_time.value)))
+            class_name.value = ""
+            class_time.value = ""
+            class_name.update()
+            class_time.update()
+            class_list.update()
+
+    class_name = ft.TextField(label="Nome da Aula")
+    class_time = ft.TextField(label="Horário da Aula")
+    class_list = ft.ListView()
+
+    return ft.View(
+        "/main",
+        controls=[
+            ft.Column(
+                [
+                    ft.Text("Agenda Estudantil", size=30, weight="bold"),
+                    ft.Row(
+                        [
+                            class_name,
+                            class_time,
+                            ft.ElevatedButton("Adicionar", on_click=add_class),
+                        ]
+                    ),
+                    class_list,
+                    ft.TextButton("Sair", on_click=lambda _: change_screen("login")),
+                ]
+            )
+        ]
+    )
